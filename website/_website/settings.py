@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #custom apps
+    'app_controle_ir.apps.AppControleIrConfig'
 ]
 
 MIDDLEWARE = [
@@ -55,7 +58,7 @@ ROOT_URLCONF = '_website.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': ['_templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,11 +80,11 @@ WSGI_APPLICATION = '_website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': loader_env('DJANGO_ENGINE_DB'),
-        'NAME': loader_env('POSTGRES_DB_NAME'),
-        'USER': loader_env('POSTGRES_USER'),
-        'PASSWORD': loader_env('POSTGRES_PASSWORD'),
-        'HOST': loader_env('POSTGRES_HOST'),
-        'PORT': loader_env('POSTGRES_PORT', cast=int)
+        'NAME': loader_env('DB_DATABASE_NAME'),
+        'USER': loader_env('DB_USER'),
+        'PASSWORD': loader_env('DB_PASSWORD'),
+        'HOST': loader_env('DB_HOST'),
+        'PORT': loader_env('DB_PORT', cast=int)
     }
 }
 
