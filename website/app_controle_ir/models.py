@@ -49,5 +49,7 @@ class Operacao(models.Model):
     lucro_ou_perda = models.DecimalField(max_digits=10, decimal_places=3)
     valor = models.DecimalField(max_digits=10, decimal_places=3)
     data = models.DateField()
+    valor_medio = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
+    cotas_totais = models.IntegerField(blank=True, null=True)
     fk_ativos_id = models.ForeignKey(Ativo, on_delete=models.CASCADE)
     fk_carteira_id = models.ForeignKey(Carteira, on_delete=models.CASCADE)
