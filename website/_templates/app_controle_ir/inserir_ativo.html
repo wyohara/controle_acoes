@@ -1,0 +1,64 @@
+{% extends '../index.html%}
+
+{% block content %}
+<div>
+    <form action="{% url 'home'%}" method="post"> {% csrf_token %}
+        <div class="form-group">
+            <label for="inserir_ativo_carteira_selec">Selecione a carteira</label>
+            <select class="form-control" id="inserir_ativo_carteira_selec" name="carteira_selec">
+                {% for carteira in listaCarteiras %}
+                    <option {% if data_form.carteira_selec == carteira.nome %} selected="selected"{% endif %} value="{{carteira.id}}">
+                        {{carteira.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="inserir_ativo_mome_ativo">Código</label><br/>
+            <strong class="text-danger" for="inserir_ativo_mome_ativo">{{error_ativo}}</strong>
+            <input type="text" class="form-control {% if error_ativo %} is-invalid {% endif %}"
+                   id="inserir_ativo_mome_ativo" aria-describedby="nome_ativo" name="nome_ativo" value="{{data_form.nome_ativo}}">
+            <small id="nome_ativo" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="inserir_ativo_num_cotas">Número de cotas</label>
+            <input type="number" class="form-control" id="inserir_ativo_num_cotas" name="cotas" value="{{data_form.cotas}}">
+        </div>
+
+        <div class="form-group">
+            <label for="inserir_ativo_valor_ativo">Valor do ativo</label>
+            <input type="number" min="0.00" step="0.01" class="form-control" id="inserir_ativo_valor_ativo" placeholder="Valor" name="valor" value="{{data_form.valor}}">
+        </div>
+
+        <div class="form-group">
+            <label for="inserir_ativo_data_operacao">Data da Operação</label>
+            <input type="date" class="form-control" id="inserir_ativo_data_operacao" name="data" value="{{data_form.data}}">
+        </div>
+
+        <div class="form-group">
+            <label for="inserir_ativo_venda">Tipo de operação</label><br/>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" id="inserir_ativo_venda" name="acao_realizada" class="custom-control-input" value="1"
+                     {% if data_form.acao_realizada1 is not 'checked' %} checked {% endif %}>
+                {{data_form.acao_realizada}}
+              <label class="custom-control-label" for="inserir_ativo_venda">Compra</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" id="inserir_ativo_compra" name="acao_realizada" class="custom-control-input" value="0" {{data_form.acao_realizada1}}>
+              <label class="custom-control-label" for="inserir_ativo_compra">Venda</label>
+            </div>
+        </div>
+        <div class="form-group">
+            {% if error %}
+            <strong class="text-danger">{{error}}</strong><br/>
+            {% endif %}
+
+
+            {% if success %}
+            <strong class="text-success">{{success}}</strong><br/>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
