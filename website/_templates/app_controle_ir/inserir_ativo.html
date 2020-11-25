@@ -35,24 +35,37 @@
         </div>
 
         <div class="form-group">
-            <label for="inserir_ativo_venda">Tipo de operação</label><br/>
+            <label for="inserir_ativo_venda">Definir se é compra ou venda</label><br/>
             <div class="custom-control custom-radio custom-control-inline">
               <input type="radio" id="inserir_ativo_venda" name="acao_realizada" class="custom-control-input" value="1"
-                     {% if data_form.acao_realizada1 is not 'checked' %} checked {% endif %}>
+                     {% if not data_form.acao_realizada_venda%} checked {% endif %}>
                 {{data_form.acao_realizada}}
               <label class="custom-control-label" for="inserir_ativo_venda">Compra</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-              <input type="radio" id="inserir_ativo_compra" name="acao_realizada" class="custom-control-input" value="0" {{data_form.acao_realizada1}}>
+              <input type="radio" id="inserir_ativo_compra" name="acao_realizada" class="custom-control-input" value="0" {{data_form.acao_realizada_venda}}>
               <label class="custom-control-label" for="inserir_ativo_compra">Venda</label>
             </div>
         </div>
+
+         <div class="form-group">
+            <label for="inserir_ativo_venda">Tipo de operação</label><br/>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" id="inserir_ativo_swing_trade" name="tipo_operacao" class="custom-control-input" value="1"
+                     {% if not data_form.acao_realizada_venda%} checked {% endif %}>
+                {{data_form.acao_realizada}}
+              <label class="custom-control-label" for="inserir_ativo_swing_trade">Swing trade</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" id="inserir_ativo_daytrade" name="tipo_operacao" class="custom-control-input" value="0" {{data_form.acao_realizada_venda}}>
+              <label class="custom-control-label" for="inserir_ativo_daytrade">Day trade</label>
+            </div>
+        </div>
+
         <div class="form-group">
             {% if error %}
             <strong class="text-danger">{{error}}</strong><br/>
             {% endif %}
-
-
             {% if success %}
             <strong class="text-success">{{success}}</strong><br/>
             {% endif %}

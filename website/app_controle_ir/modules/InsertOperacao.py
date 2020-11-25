@@ -1,35 +1,36 @@
 from ..models import Ativo, Carteira, Operacao
-from .FormOperacao import FormOperacao
+from ..forms.FormOperacao import FormOperacao
+from .home_page.MensagensHomePage import MensagensHomePage
 
 
 class InsertOperacao:
     def __init__(self, postRequest, id_ativo):
         self.__id_ativo = id_ativo
-        self.__post_request = postRequest.copy()
+        self.__post_request = postRequest.POST.copy()
+        self.__form = None
+        self.__msg_formulario = MensagensHomePage(postRequest)
 
-    def parse_tipo_operacao(self):
-        if self.__post_request['acao_realizada'] == "0":
-            return False
-        else:
-            return True
-
-    def validar_dados(self):
+    def validar_dados(self, template):
         self.__post_request["lucro_ou_perda"] = 0
-        self.__post_request['acao_realizada'] = self.parse_tipo_operacao()
+        self.__post_request['acao_realizada'] = self.__parse_tipo_operacao()
         self.__post_request['fk_ativos_id'] = Ativo.objects.get(id_ativo=self.__id_ativo)
         self.__post_request['fk_carteira_id'] = Carteira.objects.get(
             id_carteira=int(self.__post_request['carteira_selec']))
 
         form = FormOperacao(self.__post_request)
         if form.is_valid():
-            id_operacao = form.save().id_operacao
-            self.__aplicar_valor_medio(self.__post_request['fk_ativos_id'],
-                                       self.__post_request['fk_carteira_id'], id_operacao)
-            return True
-        else:
-            return False
+            self.salvar_operacao(self.__post_request['fk_ativos_id'],
+                                 self.__post_request['fk_carteira_id'], form)
+            if int(self.__post_request["cotas"]) == 0 or float(self.__post_request["valor"]) == 0.0:
+                return self.__msg_formulario.erro_campo_vazio(template)
+            return self.__msg_formulario.sucesso_inserir_ativo()
 
-    def __aplicar_valor_medio(self, ativo, carteira, id_operacao):
+        else:
+            return self.__msg_formulario.erro_inserir_ativo(template)
+
+    def salvar_operacao(self, ativo, carteira, form_operacao):
+        id_operacao = form_operacao.save().id_operacao
+
         operacao_inserida = Operacao.objects.get(id_operacao=id_operacao)
         compra = True
         operacoes = Operacao.objects.filter(fk_ativos_id=ativo, fk_carteira_id=carteira).order_by('data')
@@ -49,9 +50,8 @@ class InsertOperacao:
         operacao_inserida = self.__atualizar_lucro_ou_perda(compra, cotas_totais, operacao_inserida, valor_total)
         operacao_inserida.save()
 
-    def __atualizar_operacao_inserida(self, cotas_totais_operacoes, operacao_inserida, valor_acumulado_operacoes):
-        print(f"[#] {valor_acumulado_operacoes}")
-        print(f"[#] {cotas_totais_operacoes}")
+    @staticmethod
+    def __atualizar_operacao_inserida(cotas_totais_operacoes, operacao_inserida, valor_acumulado_operacoes):
         if cotas_totais_operacoes != 0:
             valor_medio = valor_acumulado_operacoes / cotas_totais_operacoes
         else:
@@ -60,7 +60,8 @@ class InsertOperacao:
         operacao_inserida.cotas_totais = cotas_totais_operacoes
         return operacao_inserida
 
-    def __atualizar_lucro_ou_perda(self, compra, cotas_totais_operacoes, operacao_inserida, valor_acumulado_operacoes):
+    @staticmethod
+    def __atualizar_lucro_ou_perda(compra, cotas_totais_operacoes, operacao_inserida, valor_acumulado_operacoes):
         valor_medio = 0
         try:
             if operacao_inserida.acao_realizada is not compra:
@@ -70,5 +71,11 @@ class InsertOperacao:
                 valor_medio = valor_acumulado_operacoes / cotas_totais_operacoes
         except ZeroDivisionError:
             pass
-        operacao_inserida.lucro_ou_perda = (float(operacao_inserida.valor) - valor_medio)*operacao_inserida.cotas
+        operacao_inserida.lucro_ou_perda = (float(operacao_inserida.valor) - valor_medio) * operacao_inserida.cotas
         return operacao_inserida
+
+    def __parse_tipo_operacao(self):
+        if self.__post_request['acao_realizada'] == "0":
+            return False
+        else:
+            return True
