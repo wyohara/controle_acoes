@@ -1,0 +1,20 @@
+# parar e deletar os containers
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
+
+# destruir os volumes
+docker system prune --volumes
+
+# construir e levantar e derrubar no docker-compose
+ docker-compose build
+    # levantar sem cache
+    docker build --no-cache
+ docker-compose up
+ docker-compose down
+ docker-compose rm container
+
+# entrar no terminarl
+docker exec -it challenge_oowlish_web  bash
+
+#deletar todo o cache
+docker system prune -a
+

@@ -1,6 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect, reverse
-
+from django.shortcuts import render
 from .modules.ModuleHomePage import ModuleHomePage
 from .modules.InsertOperacao import InsertOperacao
 
@@ -20,7 +18,7 @@ def home_page(request):
         if id_ativo is None:
             return module.erro_recuperar_id_ativo('app_controle_ir/inserir_ativo.html')
 
-        insert = InsertOperacao(request.POST, id_ativo).validarDados()
+        insert = InsertOperacao(request.POST, id_ativo).validar_dados()
         if insert:
             return module.sucesso_inserir_ativo('app_controle_ir/inserir_ativo.html')
         else:
